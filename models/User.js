@@ -10,7 +10,6 @@ const userSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    // trim은 공백을 없애준다
     trim: true,
   },
   password: {
@@ -36,7 +35,7 @@ const userSchema = mongoose.Schema({
 
 // 저장하기 이전의 미들웨어에 해당함
 userSchema.pre('save', function (next) {
-  // 스키마를 가리키게 됨
+  // 스키마를 가리키게 됨(해당 미들웨어를 호출한 주체)
   const user = this;
 
   if (user.isModified('password')) {
@@ -58,11 +57,11 @@ userSchema.pre('save', function (next) {
 
 // 스키마에 methods로 메서드를 만들어주면 모델 인스턴스에서 사용할 수 있음
 // index.js에서 findOne()의 결과물은 스키마로 만든 모델의 인스턴스니까 아래 메서드를 쓸 수 있음
-userSchema.methods.comparePassword = function (plainPassword, cb) {
-  bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
+userSchema.methods.comparePassword = async function (plainPassword, cb) {
+  const isPasswordSame = await bcrypt.compare(plainPassword, this.password);
+
+  if (!isPasswordSame) cb(isPasswordSame);
+  else cb(null, isPasswordSame);
 };
 
 userSchema.methods.generateToken = function (cb) {
@@ -75,6 +74,20 @@ userSchema.methods.generateToken = function (cb) {
     .save()
     .then(() => cb(null, user))
     .catch((err) => cb(err));
+};
+
+userSchema.statics.findByToken = function (token, cb) {
+  const user = this;
+  jwt.verify(token, 'secretToken', async function (err, decoded) {
+    // user id를 이용해서 유저를 찾고
+    // 클라이언트에서 가져온 토큰과 DB에 보관된 토큰이 일치하는지 확인
+    try {
+      const foundTokenUser = await user.findOne({ _id: decoded, token: token });
+      return cb(null, foundTokenUser);
+    } catch (err) {
+      return cb(err);
+    }
+  });
 };
 const User = mongoose.model('User', userSchema);
 
