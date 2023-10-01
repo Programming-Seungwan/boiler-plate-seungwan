@@ -1,11 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 
 const mongoose = require('mongoose');
-
+// key는 mongoDB의 connect와 관련된 것에 해당
 mongoose
   .connect(
-    'mongodb+srv://swsj4480:rp3cYuQP0kAbhZTs@seungwancluster1.uxzvlee.mongodb.net/'
+    `mongodb+srv://swsj4480:${process.env.mongoDBKEY}@seungwancluster1.uxzvlee.mongodb.net/`
   )
   .then(() => console.log('MongoDB Connected!'))
   .catch((err) => console.log(err));
