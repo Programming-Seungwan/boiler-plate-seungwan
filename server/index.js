@@ -15,7 +15,7 @@ mongoose
   .connect(
     `mongodb+srv://swsj4480:${process.env.mongoDBKEY}@seungwancluster1.uxzvlee.mongodb.net/`
   )
-  .then(() => console.log('MongoDB Connected!'))
+  .then(() => 'MongoDB Connected!')
   .catch((err) => console.log(err));
 
 app.get('/', (req, res) => {
