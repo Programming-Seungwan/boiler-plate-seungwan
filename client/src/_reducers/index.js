@@ -6,7 +6,7 @@ import comment from './comment_reducer';
 
 const rootReducer = combineReducers({
   user,
-  comment,
+  // comment,
 });
 
 export default rootReducer;
