@@ -22,6 +22,10 @@ app.get('/', (req, res) => {
   res.send('Hello world!');
 });
 
+app.get('/api/hello', (req, res) => {
+  res.send('안녕하세요');
+});
+
 app.post('/api/users/register', async (req, res) => {
   // 회원 가입 시, 필요한 정보들을 클라이언트에서 가져오면
   // 그것들을 데이터베이스에 넣어준다
@@ -86,6 +90,6 @@ app.get('/api/users/logout', auth, async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(4000, () => {
   console.log('I am listening!');
 });
